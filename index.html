@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>解忧中元 · 护灵小分队</title>
+    <style>
+      :root { --app-vh: 1vh; }
+      html, body { margin:0; padding:0; background:#0b0615; }
+      body { font-family: ui-monospace, Menlo, Consolas, "PingFang SC","Noto Sans SC","Microsoft YaHei", sans-serif; }
+      #container { display:flex; align-items:center; justify-content:center; width:100vw; height:calc(var(--app-vh) * 100); }
+      /* 支持动态视口单位的浏览器优先使用 100dvh/100svh */
+      @supports (height: 100dvh) { #container { height: 100dvh; } }
+      @supports (height: 100svh) and not (height: 100dvh) { #container { height: 100svh; } }
+      #canvas-holder { position:relative; }
+      #ui-overlay { position:absolute; left:0; top:0; right:0; pointer-events:none; }
+    </style>
+    <!-- p5.js + p5.sound CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.2/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.2/addons/p5.sound.min.js"></script>
+    <!-- 你的资源清单（手动填写路径） -->
+    <script src="./manifest.js"></script>
+    <!-- 小鬼名称/效果/台词（可改文案与分值） -->
+    <script src="./data.js"></script>
+    <!-- 主逻辑 -->
+    <script src="./sketch.js"></script>
+    <!-- 视口高度修正（iOS 地址栏/工具栏收缩） -->
+    <script>
+      (function(){
+        function setAppVh(){
+          var vh = window.innerHeight * 0.01; // 1% 视口高度
+          document.documentElement.style.setProperty('--app-vh', vh + 'px');
+          // 若已初始化游戏，顺带刷新画布缩放
+          if(window.updateCanvasScale){ try{ window.updateCanvasScale(); }catch(e){} }
+        }
+        // 首次与各类可能变化时机
+        window.addEventListener('resize', setAppVh, {passive:true});
+        window.addEventListener('orientationchange', setAppVh, {passive:true});
+        window.addEventListener('pageshow', setAppVh);
+        document.addEventListener('visibilitychange', setAppVh);
+        // DOM 就绪后再执行一次，避免早期布局不准确
+        if(document.readyState === 'complete' || document.readyState === 'interactive') setAppVh();
+        else document.addEventListener('DOMContentLoaded', setAppVh);
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="container">
+      <div id="canvas-holder">
+        <div id="ui-overlay"></div>
+      </div>
+    </div>
+  </body>
+</html>
